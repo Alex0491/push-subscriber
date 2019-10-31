@@ -8,7 +8,7 @@ const check = () => {
 }
 
 const registerServiceWorker = async () => {
-  const swRegistration = await navigator.serviceWorker.register('https://hpstation:2020/service.js')
+  const swRegistration = await navigator.serviceWorker.register('/service.js')
   return swRegistration
 }
 
