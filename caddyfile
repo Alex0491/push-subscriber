@@ -1,0 +1,4 @@
+hpstation:2020 {
+  bind {$ADDRESS}
+  tls self_signed
+}
