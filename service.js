@@ -1,5 +1,4 @@
 // urlB64ToUint8Array is a magic function that will encode the base64 public key
-// to Array buffer which is needed by the subscription option
 const urlB64ToUint8Array = base64String => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
@@ -12,45 +11,66 @@ const urlB64ToUint8Array = base64String => {
 }
 
 self.addEventListener('activate', async () => {
-  // This will be called only once when the service worker is activated.
   console.log('service worker activate')
   try {
     const applicationServerKey = urlB64ToUint8Array(
       'BB1k6GlIrrB0TiO6WFbQFYZkNIdfOBzQN4yHa0xGvrhhBdqFhoibHxD_rGdUsFcc0p3UFfYf8kS-peymtBUc6M4'
-    )
+    )    
     const options = { applicationServerKey, userVisibleOnly: true }
     const subscription = await self.registration.pushManager.subscribe(options)
 
-    var body = JSON.stringify(subscription)
-    console.log(body)
+    const subscriptionJson = JSON.stringify(subscription)
+    console.log("subscription: ", subscriptionJson)
 
-    const resp = await fetch('http://localhost:6601/save', {
+    await fetch('http://localhost:6601/save', {
       method: 'post',
+      mode: "no-cors",
+      cache: "no-cache",
       headers: {
         'Content-Type': 'application/json',
       },
-      body: body,
-    })
+      body: subscriptionJson,
+    }).then(
+      (resp) => {console.log(resp.statusText)}, 
+      (reason) => {console.log(reason)}
+    )
 
-    console.log(resp.statusText)
-    
-    
   } catch (err) {
     console.log('Error', err)
   }
 })
 
 self.addEventListener('push', function(event) {
-  if (event.data != null) {
-    console.log('Push event!! ', event.data.text())
-  } else {
-    console.log('Push event but no data')
+  console.log('received push')
+  console.log('push: ', event.data ? event.data.text() : "null")
+
+  try {
+    const pushData = event.data.json()
+
+    console.log('1', pushData.options);
+
+    const title = pushData.title
+    const options = pushData.options ? JSON.parse(pushData.options) : {};
+
+    event.waitUntil(self.registration.showNotification(title, options));
+  } catch(err) {
+    console.log('Error', err)
   }
+})
 
-  const title = 'Test Webpush';
-  const options = {
-    body: event.data.text(),
-  };
+self.addEventListener('notificationclick', function(event) {
+  if (event.notification.data.url) {
+    let navigationUrl = event.notification.data.url;
 
-  event.waitUntil(self.registration.showNotification(title, options));
+    event.waitUntil(
+      clients.matchAll({ type: 'window' })
+        .then(clients => clients.filter(client => client.url === originalUrl))
+        .then(matchingClients => {
+          if (matchingClients[0]) {
+            return matchingClients[0].navigate(navigationUrl).then(client => client.focus());
+          }
+          return clients.openWindow(navigationUrl);
+        })
+    );
+  }
 })
