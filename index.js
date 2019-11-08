@@ -25,3 +25,13 @@ const subscribe = async () => {
   await requestNotificationPermission()
   await registerServiceWorker()
 }
+
+const testNotify = async () => {
+  await navigator.serviceWorker.getRegistration().then(reg => {
+    reg.showNotification('test notification', {
+      body:  'body here',
+      icon:  '/icon.png',
+      image: '/image.png'
+    })
+  })
+}
