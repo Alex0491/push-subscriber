@@ -14,7 +14,7 @@ self.addEventListener('activate', async () => {
   console.log('service worker activate')
   try {
     const applicationServerKey = urlB64ToUint8Array(
-      'BHQvI_SG5HT4Hd2QQux7uaOU72CyjtSvfTdccZ2RXmMRCW-fWwLMN2ko7zi-P5MSyYpka1JLA-4qFzZ-VvKa5Ss'
+      'BIDkvsTisKdbjb7eLOuXcgraPpNRkseWt_tUKJoW05fMsRX1OyHxa1ho9SBtuhaPP-EQmAf00rAnwlFTsJXndUI'
     )    
     const options = { applicationServerKey, userVisibleOnly: true }
     const subscription = await self.registration.pushManager.subscribe(options)
