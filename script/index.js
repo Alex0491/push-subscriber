@@ -8,7 +8,7 @@ const checkPushesSupporting = () => {
 }
 
 const registerServiceWorker = async () => {
-  return navigator.serviceWorker.register('/service.js')
+  return navigator.serviceWorker.register('/script/service.js')
 }
 
 const requestNotificationPermission = async () => {
