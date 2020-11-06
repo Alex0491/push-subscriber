@@ -1,0 +1,7 @@
+https://localhost:2020 {
+  file_server browse
+}
+
+:12020 {
+  file_server browse
+}
