@@ -15,7 +15,7 @@ self.addEventListener('activate', async () => {
   try {
     const applicationServerKey = urlB64ToUint8Array(
       'BIDkvsTisKdbjb7eLOuXcgraPpNRkseWt_tUKJoW05fMsRX1OyHxa1ho9SBtuhaPP-EQmAf00rAnwlFTsJXndUI'
-    )    
+    )
     const options = { applicationServerKey, userVisibleOnly: true }
     const subscription = await self.registration.pushManager.subscribe(options)
 
@@ -31,8 +31,8 @@ self.addEventListener('activate', async () => {
       },
       body: subscriptionJson,
     }).then(
-      (resp) => {console.log(resp.statusText)}, 
-      (reason) => {console.log(reason)}
+      (resp) => { console.log(resp.statusText) },
+      (reason) => { console.log(reason) }
     )
 
   } catch (err) {
@@ -40,7 +40,7 @@ self.addEventListener('activate', async () => {
   }
 })
 
-self.addEventListener('push', function(event) {
+self.addEventListener('push', function (event) {
   console.log('received push')
   console.log('push: ', event.data ? event.data.text() : "null")
 
@@ -50,15 +50,17 @@ self.addEventListener('push', function(event) {
     console.log('1', pushData.options);
 
     const title = pushData.title
-    const options = pushData.options ? JSON.parse(pushData.options) : {};
+    const options = pushData.options ? JSON.parse(pushData.options) : {
+      body: pushData.body ?? ""
+    };
 
     event.waitUntil(self.registration.showNotification(title, options));
-  } catch(err) {
+  } catch (err) {
     console.log('Error', err)
   }
 })
 
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener('notificationclick', function (event) {
   if (event.notification.data.url) {
     let navigationUrl = event.notification.data.url;
 
