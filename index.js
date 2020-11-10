@@ -21,7 +21,7 @@ const requestNotificationPermission = async () => {
 const subscribe = async () => {
   console.log("click subscribe")
   checkPushesSupporting()
-  
+
   await requestNotificationPermission()
   await registerServiceWorker()
 }
@@ -29,9 +29,18 @@ const subscribe = async () => {
 const testNotify = async () => {
   await navigator.serviceWorker.getRegistration().then(reg => {
     reg.showNotification('test notification', {
-      body:  'body here',
-      icon:  '/icon.png',
+      body: 'body here',
+      icon: '/icon.png',
       image: '/image.png'
     })
   })
+}
+
+const printSubscription = async () => {
+  navigator.serviceWorker.getRegistration().then(
+    r => {
+      return r.pushManager.getSubscription()
+    }).then(s => {
+      console.log(JSON.stringify(s))
+    })
 }
